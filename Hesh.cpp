@@ -1,5 +1,4 @@
 ﻿#include <iostream>
-#include <vector>
 #include <algorithm>
 #include <functional>
 #include <numeric>
@@ -10,6 +9,7 @@
 #include <set>
 #include <fstream>
 #include <iomanip>
+#include <vector>
 using namespace std;
 
 //Director(1) Manager(2) Analyst(3) Engineer(4) Designer(5)
@@ -87,15 +87,15 @@ void print(people x) {
 
     out << left << setw(10) << x.Salary << endl;//запрлата
 }
-
-struct list {
+//------------------------------------------------------------------------------------------------
+struct dvus {
     int inf;
-    list* next;
-    list* prev;
+    dvus* next;
+    dvus* prev;
 };
 
-void push(list*& h, list*& t, int x) { //вставка элемента в конец списка
-    list* r = new list; //создаем новый элемент
+void push(dvus*& h, dvus*& t, int x) { //вставка элемента в конец списка
+    dvus* r = new dvus; //создаем новый элемент
     r->inf = x;
     r->next = NULL; //всегда последний
     if (!h && !t) { //если список пуст
@@ -109,16 +109,16 @@ void push(list*& h, list*& t, int x) { //вставка элемента в ко
     t = r; //r теперь хвост
 }
 
-void print(list* h, list* t) { //печать элементов списка
-    list* p = h; //укзатель на голову
+void print(dvus* h, dvus* t) { //печать элементов списка
+    dvus* p = h; //укзатель на голову
     while (p) { //пока не дошли до конца списка
         cout << p->inf << " ";
         p = p->next; //переход к следующему элементу
     }
 }
 
-list* find(list* h, list* t, int x) { //печать элементов списка
-    list* p = h; //укзатель на голову
+dvus* find(dvus* h, dvus* t, int x) { //печать элементов списка
+    dvus* p = h; //укзатель на голову
     while (p) { //пока не дошли до конца списка
         if (p->inf == x) break; // если нашли, прекращаем цикл
         p = p->next; //переход к следующему элементу
@@ -126,8 +126,8 @@ list* find(list* h, list* t, int x) { //печать элементов спис
     return p; //возвращаем указатель
 }
 
-void insert_after(list*& h, list*& t, list* r, int y) { //вставляем после r
-    list* p = new list; //создаем новый элемент
+void insert_after(dvus*& h, dvus*& t, dvus* r, int y) { //вставляем после r
+    dvus* p = new dvus; //создаем новый элемент
     p->inf = y;
     if (r == t) { //если вставляем после хвоста
         p->next = NULL; //вставляемый эл-т - последний
@@ -143,7 +143,7 @@ void insert_after(list*& h, list*& t, list* r, int y) { //вставляем п�
     }
 }
 
-void del_node(list*& h, list*& t, list* r) { //удаляем r
+void del_node(dvus*& h, dvus*& t, dvus* r) { //удаляем r
     if (r == h && r == t) //единственный элемент списка
         h = t = NULL;
     else if (r == h) { //удаляем голову списка
@@ -161,20 +161,60 @@ void del_node(list*& h, list*& t, list* r) { //удаляем r
     //delete r; //удаляем r
 }
 
-void del_list(list*& h, list*& t) { //удаляем список
+void del_dvus(dvus*& h, dvus*& t) { //удаляем список
     while (h) { //пока список не пуст
-        list* p = h; //указатель на голову
+        dvus* p = h; //указатель на голову
         h = h->next; //переносим голову
         h->prev = NULL; //обнуляем
         delete p; //удаляем p
     }
 }
 
+int hesh(int x) {
+    return x % 7;
+}
 
-int main()
-{
 
+int main() {
+    setlocale(0, "ru");
 
+    int m = 7;
+    int n = 20;
 
-    std::cout << "Hello World!\n";
+    vector<vector<int>> task1(m);
+    vector<people> dannie;
+    dannie = inFile();
+
+    int k;
+    for (int i = 0; i < dannie.size(); ++i) {
+        k = hesh(dannie[i].Salary);
+        task1[k].push_back(dannie[i].Salary);
+    }
+
+    for (int i = 0; i < task1.size(); ++i, cout << endl) {
+        cout << i << ": ";
+        for (int j = 0; j < task1[i].size(); ++j)
+            cout << task1[i][j] << ", ";
+    }
+
+    int x;
+    cout << "Какой элемент надо найти: ";
+    cin >> x;
+
+    int HeshOfX = hesh(x);
+    for (int i = 0; i < task1[HeshOfX].size(); ++i) {
+        if (task1[HeshOfX][i] == x) {
+            cout << "Мы нашли х";
+            task1[HeshOfX].erase(task1[HeshOfX].begin() + i);
+        }
+    }
+
+    cout << endl;
+    for (int i = 0; i < task1.size(); ++i, cout << endl) {
+        cout << i << ": ";
+        for (int j = 0; j < task1[i].size(); ++j)
+            cout << task1[i][j] << ", ";
+    }
+
+    return 0;
 }
