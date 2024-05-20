@@ -170,24 +170,40 @@ void del_dvus(dvus*& h, dvus*& t) { //удаляем список
     }
 }
 
-int hesh(int x) {
+int hesh1(int x) {
     return x % 7;
+}
+
+// Хэш-функция h
+int hash2_1(int x, int m) {
+    float a = x * 0.62;
+    float a_drob = a - int(a);
+    int umn = m * a_drob;
+
+    return umn;
+}
+
+// Хэш-функция для разрешения коллизий f
+int hesh2_2(int h, int j, int m) {
+    return (h + j) % m;
 }
 
 
 int main() {
     setlocale(0, "ru");
 
-    int m = 7;
     int n = 20;
 
-    vector<vector<int>> task1(m);
     vector<people> dannie;
     dannie = inFile();
+    //---------------------------------------------------------------
+    int m1 = 7;
+
+    vector<vector<int>> task1(m1);
 
     int k;
     for (int i = 0; i < dannie.size(); ++i) {
-        k = hesh(dannie[i].Salary);
+        k = hesh1(dannie[i].Salary);
         task1[k].push_back(dannie[i].Salary);
     }
 
@@ -201,7 +217,7 @@ int main() {
     cout << "Какой элемент надо найти: ";
     cin >> x;
 
-    int HeshOfX = hesh(x);
+    int HeshOfX = hesh1(x);
     for (int i = 0; i < task1[HeshOfX].size(); ++i) {
         if (task1[HeshOfX][i] == x) {
             cout << "Мы нашли х";
@@ -214,6 +230,33 @@ int main() {
         cout << i << ": ";
         for (int j = 0; j < task1[i].size(); ++j)
             cout << task1[i][j] << ", ";
+    }
+    //---------------------------------------------------------------------
+    int m2 = 8; // Размерность хэш-таблицы
+
+
+    vector<int> task2(m2, 0); // Создаем и заполняем хэш-таблицу значением INF
+
+    for (int i = 0; i < n; i++) {
+        int k = hash2_1(dannie[i].experience, m2);
+        int j = 0;
+
+        while (j < m2) {
+            int p = hesh2_2(k, j, m2);
+
+            if (task2[p] == 0) {
+                task2[p] = dannie[i].experience; // Вставляем A[i] в п-ую ячейку хэш-таблицы
+                break;
+            }
+            else {
+                j++;
+            }
+        }
+    }
+
+    // Выводим содержимое хэш-таблицы
+    for (int i = 0; i < m2; i++) {
+        cout << "Хэш-таблица[" << i << "]: " << task2[i] << endl;
     }
 
     return 0;
